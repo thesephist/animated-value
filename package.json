@@ -1,0 +1,17 @@
+{
+  "name": "animated-value",
+  "version": "0.1.0",
+  "description": "An imperative animation API for declarative UI renderers",
+  "main": "src/index.js",
+  "repository": "git@github.com:thesephist/animated-value.git",
+  "author": "Linus Lee <linus@thesephist.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "webpack --config webpack.config.js"
+  },
+  "devDependencies": {
+    "bundlesize": "^0.17.0",
+    "webpack": "^4.28.3",
+    "webpack-cli": "^3.2.1"
+  }
+}
