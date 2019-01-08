@@ -1,10 +1,20 @@
+import * as Bezier from 'bezier-easing';
+
 const identity = t => t;
 
 const now = () => new Date().getTime();
 
 const CURVES = {
     LINEAR: identity,
-    // TODO: EASE_IN, EASE_OUT, EASE_IN_OUT, SPRING_IN, SPRING_OUT
+    EASE: Bezier(0.25, 0.1, 0.25, 1),
+    EASE_IN: Bezier(0.42, 0, 1, 1),
+    EASE_OUT: Bezier(0, 0, 0.58, 1),
+    EASE_IN_OUT: Bezier(0.42, 0, 0.58, 1),
+    EASE_IN_BACK: Bezier(0.6, -0.28, 0.735, 0.045),
+    EASE_OUT_BACK: Bezier(0.175, 0.885, 0.32, 1.275),
+    EXPO_IN: Bezier(0.95, 0.05, 0.795, 0.035),
+    EXPO_OUT: Bezier(0.19, 1, 0.22, 1),
+    EXPO_IN_OUT: Bezier(1, 0, 0, 1),
 }
 
 class AnimatedValue {
@@ -17,12 +27,12 @@ class AnimatedValue {
     }) {
         this.start = start;
         this.end = end;
-        this.ease = ease;
+        this.ease = Array.isArray(ease) ? Bezier(...ease) : ease;
 
         this.reset();
     }
 
-    static CURVES() {
+    static get CURVES() {
         return CURVES;
     }
 

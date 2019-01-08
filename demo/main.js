@@ -7,11 +7,12 @@ class DemoView extends StyledComponent {
     init() {
         this.opacity = new AnimatedValue({
             start: 1,
-            end: 0,
+            end: .2,
         });
         this.xPosition = new AnimatedValue({
             start: 0,
             end: 300,
+            ease: AnimatedValue.CURVES.EXPO_IN_OUT,
         });
         this.slideOut = AnimatedValue.compose(
             this.opacity,
@@ -36,7 +37,7 @@ class DemoView extends StyledComponent {
     }
 
     handleStartClick() {
-        this.slideOut.play(1000, (val) => this.render(val));
+        this.slideOut.play(1800, (val) => this.render(val));
     }
 
     handleResetClick() {

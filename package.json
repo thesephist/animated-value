@@ -8,6 +8,7 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack --config webpack.config.js",
+    "build:watch": "webpack --config webpack.config.js --watch",
     "test:size": "bundlesize"
   },
   "devDependencies": {
@@ -20,5 +21,8 @@
       "path": "dist/*.js",
       "threshold": "2.5kB"
     }
-  ]
+  ],
+  "dependencies": {
+    "bezier-easing": "^2.1.0"
+  }
 }
