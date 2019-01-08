@@ -1,6 +1,12 @@
 # `animated-value`
 
+[![npm animated-value](https://img.shields.io/npm/v/animated-value.svg)](http://npm.im/animated-value)
+[![gzip size](http://img.badgesize.io/https://unpkg.com/animated-value/dist/index.min.js?compression=gzip)](https://unpkg.com/animated-value/dist/index.min.js)
+[![install size](https://packagephobia.now.sh/badge?p=animated-value)](https://packagephobia.now.sh/result?p=animated-value)
+
 `animated-value` is an imperative animation API for declarative UI renderers, like React, Preact, and Torus.
+
+You can see a simple demo of `animated-value` [here](https://animated-value.surge.sh); the source is linked, and also found under `demo/`.
 
 ## Imperative animation what?
 

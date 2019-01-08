@@ -11,7 +11,7 @@
     "build:watch": "webpack --config webpack.config.js --watch",
     "test:size": "bundlesize",
     "prepublishOnly": "webpack --config webpack.config.js",
-    "deploy:demo": "surge -p demo/ --domain animated-value.surge.sh"
+    "deploy:demo": "surge -p demo/ --domain https://animated-value.surge.sh"
   },
   "files": [
     "src",
