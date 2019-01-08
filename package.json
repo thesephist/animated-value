@@ -9,7 +9,15 @@
   "scripts": {
     "build": "webpack --config webpack.config.js",
     "build:watch": "webpack --config webpack.config.js --watch",
-    "test:size": "bundlesize"
+    "test:size": "bundlesize",
+    "prepublishOnly": "webpack --config webpack.config.js"
+  },
+  "files": [
+    "src",
+    "dist"
+  ],
+  "dependencies": {
+    "bezier-easing": "^2.1.0"
   },
   "devDependencies": {
     "bundlesize": "^0.17.0",
@@ -22,7 +30,14 @@
       "threshold": "2.5kB"
     }
   ],
-  "dependencies": {
-    "bezier-easing": "^2.1.0"
-  }
+  "keywords": [
+    "animate",
+    "animation",
+    "easing",
+    "bezier",
+    "component",
+    "transition",
+    "torus",
+    "react"
+  ]
 }
