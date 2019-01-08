@@ -16,4 +16,6 @@ The `AnimatedValue` class represents a value (usually a CSS property) that you c
 - `end`: The final value of the `AnimatedValue`
 - `ease`: An easing function that maps `[0, 1)` to itself, mapping time to progress.
 
+## Roadmap
 
+- `AnimatedValue#play()` should return a promise that resolves when animation completes, and rejects when it's interrupted (cancelled).

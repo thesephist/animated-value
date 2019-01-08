@@ -4,6 +4,12 @@ const identity = t => t;
 
 const now = () => new Date().getTime();
 
+const ANIMATION_STATE = {
+    UNSTARTED: 0,
+    PLAYING: 1,
+    PAUSED: 2,
+}
+
 const CURVES = {
     LINEAR: identity,
     EASE: Bezier(0.25, 0.1, 0.25, 1),
@@ -17,19 +23,78 @@ const CURVES = {
     EXPO_IN_OUT: Bezier(1, 0, 0, 1),
 }
 
-class AnimatedValue {
+class Playable {
+
+    constructor() {
+        this._duration = null;
+        this._startTime = null;
+        this._pausedTime = null;
+        this._callback = null;
+    }
+
+    get isPlaying() {
+        return this._startTime !== null;
+    }
+
+    get isFinished() {
+        return this._duration === null;
+    }
+
+    play(duration, callback) {
+        this._duration = duration;
+        this._startTime = now();
+
+        this._callback = () => {
+            if (callback !== undefined) {
+                callback();
+            }
+            if (now() - this._startTime > this._duration) {
+                this.pause();
+            } else {
+                requestAnimationFrame(this._callback);
+            }
+        }
+        this._callback();
+    }
+
+    pause() {
+        if (this.isPlaying) {
+            this._pausedTime = now() - this._startTime;
+            this._startTime = null;
+        }
+    }
+
+    resume() {
+        if (!this.isFinished && !this.isPlaying) {
+            this._startTime = now() - this._pausedTime;
+            this._pausedTime = null;
+            if (this.callback) {
+                this._callback();
+            }
+        }
+    }
+
+    reset() {
+        this._duration = null;
+        this._startTime = null;
+        this._pausedTime = null;
+        this._callback = null;
+    }
+
+}
+
+class AnimatedValue extends Playable {
 
     constructor({
-        // Rather than start and stop, how about rangeMin and rangeMax? More flexible model for easing.
         start = 0,
         end = 1,
         ease = identity,
     }) {
+        super();
         this.start = start;
         this.end = end;
         this.ease = Array.isArray(ease) ? Bezier(...ease) : ease;
-
-        this.reset();
+        this._fillState = start;
     }
 
     static get CURVES() {
@@ -40,16 +105,8 @@ class AnimatedValue {
         return new CompositeAnimatedValue(animatedValues);
     }
 
-    get isRunning() {
-        return this._startTime !== null;
-    }
-
-    get isFinished() {
-        return this._duration === null;
-    }
-
     value() {
-        if (!this.isRunning) { // means it's paused
+        if (!this.isPlaying) { // means it's paused or finished
             return this._fillState;
         } else {
             const elapsedTime = now() - this._startTime;
@@ -58,109 +115,41 @@ class AnimatedValue {
         }
     }
 
-    play(duration, render) {
-        this._duration = duration;
-        this._startTime = now();
-
-        this._callback = () => {
-            if (render !== undefined) {
-                render(this.value());
-            }
-            if (now() - this._startTime > this._duration) {
-                this.pause();
-            } else {
-                requestAnimationFrame(this._callback);
-            }
-        }
-        this._callback();
-    }
-
     pause() {
-        if (this.isRunning) {
+        super.pause();
+        if (this.isPlaying) {
             this._fillState = this.value();
-            this._pausedTime = now() - this._startTime;
-            this._startTime = null;
         }
-    }
-
-    resume() {
-        if (!this.isFinished && !this.isRunning) {
-            this._startTime = now() - this._pausedTime;
-            this._pausedTime = null;
-            this._callback();
-        }
-    }
-
-    reset() {
-        this._fillState = this.start;
-        this._duration = null;
-        this._startTime = null;
-        this._pausedTime = null;
-    }
-
-    update({
-        start,
-        end,
-        duration,
-    }) {
-        this.start = start || this.start;
-        this.end = end || this.end;
-        this.duration = duration || this.duration;
     }
 
 }
 
-class CompositeAnimatedValue {
+class CompositeAnimatedValue extends Playable {
 
     constructor(animatedValues) {
+        super();
         this._animatedValues = animatedValues;
-        this.reset();
     }
 
-    get isRunning() {
-        return this._startTime !== null;
-    }
-
-    get isFinished() {
-        return this._duration === null;
-    }
-
-    play(duration, render) {
-        this._duration = duration;
-        this._startTime = now();
-
+    play(duration, callback) {
+        //> Play swallows the callback here and calls it once
+        //  for the entire composition, efficiently.
+        super.play(duration, callback);
         for (const av of this._animatedValues) {
             av.play(duration);
         }
-
-        this._callback = () => {
-            if (render !== undefined) {
-                render(this._animatedValues.map(av => av.value()));
-            }
-            if (now() - this._startTime > this._duration) {
-                this.pause();
-            } else {
-                requestAnimationFrame(this._callback);
-            }
-        }
-        this._callback();
     }
 
     pause() {
-        if (this.isRunning) {
-            this._pausedTime = now() - this._startTime;
-            this._startTime = null;
-        }
+        super.pause();
         for (const av of this._animatedValues) {
             av.pause();
         }
     }
 
     resume() {
-        if (!this.isFinished && !this.isRunning) {
-            this._startTime = now() - this._pausedTime;
-            this._pausedTime = null;
-            this._callback();
+        super.resume();
+        if (!this.isFinished && !this.isPlaying) {
             for (const av of this._animatedValues) {
                 av.resume();
             }
@@ -168,8 +157,7 @@ class CompositeAnimatedValue {
     }
 
     reset() {
-        this._duration = null;
-        this._startTime = null;
+        super.reset();
         for (const av of this._animatedValues) {
             av.reset();
         }

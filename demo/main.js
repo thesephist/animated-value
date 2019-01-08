@@ -12,11 +12,23 @@ class DemoView extends StyledComponent {
         this.xPosition = new AnimatedValue({
             start: 0,
             end: 300,
-            ease: AnimatedValue.CURVES.EXPO_IN_OUT,
+            ease: AnimatedValue.CURVES.EASE_IN_OUT,
+        });
+        this.yPosition = new AnimatedValue({
+            start: 0,
+            end: 200,
+            ease: AnimatedValue.CURVES.EXPO_OUT,
+        });
+        this.scale = new AnimatedValue({
+            start: 1,
+            end: 1.3,
+            ease: AnimatedValue.CURVES.EXPO_OUT,
         });
         this.slideOut = AnimatedValue.compose(
             this.opacity,
-            this.xPosition
+            this.xPosition,
+            this.yPosition,
+            this.scale,
         );
 
         this.handleStartClick = this.handleStartClick.bind(this);
@@ -37,7 +49,7 @@ class DemoView extends StyledComponent {
     }
 
     handleStartClick() {
-        this.slideOut.play(1800, (val) => this.render(val));
+        this.slideOut.play(800, () => this.render());
     }
 
     handleResetClick() {
@@ -53,8 +65,8 @@ class DemoView extends StyledComponent {
         this.slideOut.resume();
     }
 
-    compose(val) {
-        console.log('rendering', val);
+    compose() {
+        console.log('rendering');
         return jdom`<main>
             <h1>Click the button below to start the animation</h1>
             <button class="startButton" onclick="${this.handleStartClick}">
@@ -71,7 +83,7 @@ class DemoView extends StyledComponent {
             </button>
             <div class="box" style="
                 opacity: ${this.opacity.value()};
-                transform: translateX(${this.xPosition.value()}px)
+                transform: translate(${this.xPosition.value()}px, ${this.yPosition.value()}px) scale(${this.scale.value()})
             "></div>
         </main>`;
     }
