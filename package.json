@@ -7,11 +7,18 @@
   "author": "Linus Lee <linus@thesephist.com>",
   "license": "MIT",
   "scripts": {
-    "build": "webpack --config webpack.config.js"
+    "build": "webpack --config webpack.config.js",
+    "test:size": "bundlesize"
   },
   "devDependencies": {
     "bundlesize": "^0.17.0",
     "webpack": "^4.28.3",
     "webpack-cli": "^3.2.1"
-  }
+  },
+  "bundlesize": [
+    {
+      "path": "dist/*.js",
+      "threshold": "2.5kB"
+    }
+  ]
 }
