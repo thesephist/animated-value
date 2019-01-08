@@ -6,6 +6,8 @@
 
 It's 2019! We build a lot of our user interfaces with web technologies, and most of us use _declarative_ rendering frameworks like **React** to define our user interfaces as a function of state. But this makes imperative animation -- being able to tell the UI "Here's where you start, and I'm going to tell you how to move through the animation" -- hairy.
 
+In declarative UI frameworks, it's also tricky to implement animations that we can start, stop, pause, and rewind programmatically based on timers or events -- CSS transitions sometimes fall short.
+
 Enter `animated-value`!
 
 ## Using `animated-value`
@@ -16,7 +18,7 @@ You can import `animated-value` with a script tag...
 <script src="https://unpkg.com/animated-value/dist/index.min.js"></script>
 ```
 
-... and you'll find the `AnimatedValue` object in the global scope.
+... and you'll find the `AnimatedValue` object in the global scope (as `window.AnimatedValue`).
 
 Alternatively, you can install `animated-value` using npm...
 
@@ -32,6 +34,8 @@ import { AnimatedValue } from 'animated-value';
 const animatedOpacity = new AnimatedValue(/*...*/);
 // ...
 ```
+
+If you're not to keen on reading gobs of documentation, feel free to skip down to the **Examples** section below.
 
 ### `AnimatedValue`
 
@@ -63,7 +67,7 @@ You can check out the exact definitions of all the pre-defined easing curves in 
 
 ### Controlling animations
 
-The power in `animated-value` comes in more than being able to define animations -- CSS can do that just fine. With `AnimatedValue` objects, we can finely control when animations start, stop, pause, and get reset.
+The power in `animated-value` comes in more than being able to define animations -- CSS can do that just fine. With `AnimatedValue` objects, we can finely control when animations start, stop, pause, and get reset, and we can group animations into larger groups of animated properties to control them together, as a single unit of animation.
 
 Let's create an animated value for opacity, for a fade-in effect:
 
@@ -73,7 +77,7 @@ const animatedOpacity = new AnimatedValue({
     end: 1,
 });
 
-animatedOpacity.value(); // 0, since we haven't started the animation yet
+animatedOpacity.value(); // 0, our start value, since we haven't started the animation yet
 ```
 
 To play the animation, we call `play()` with a duration, in milliseconds.
@@ -154,7 +158,7 @@ class MyAnimatedComponent extends React.Component {
 
 And we've animated our React component with `animated-value`!
 
-Of course, if this was all we could do, there would be a use for such an elaborate solution. Since we have a handle on the `animatedOpacity` object, we can play, pause, and reset/re-play the animation at any time, in response to user events, timers, or anything else in your code.
+Of course, if this was all we could do, there wouldn't be use for such an elaborate solution. Since we have a handle on the `animatedOpacity` object, we can play, pause, and reset/re-play the animation at any time, in response to user events, timers, or anything else in your code.
 
 We can pause the animation anytime through the play with `pause()`, and reset the animation to its original state with `reset()`. Both of these can be called at any time during or before/after animation plays.
 
@@ -172,7 +176,7 @@ animatedOpacity.play(2000); // ignored
 // to re-start an animation, call `reset()`, then `play()` again.
 ```
 
-### Promise API
+### Chaining animations with the Promise API
 
 `AnimatedValue#play()` returns a promise that resolves as soon as the animation is either complete, or reset.
 
@@ -225,9 +229,11 @@ const animatedSwing = AnimatedValue.compose(animatedX, animatedY);
 animatedSwing.play(2000);
 ```
 
-Composite values like this have the same play/pause/resume/reset API as singular `AnimatedValue`s. In fact, composite animations are polymorphic under the hood -- you can pass composite animated values as arguments to bigger composite animated values!
+Composite values like this have the same play/pause/resume/reset API as singular `AnimatedValue`s. In fact, the animations API are polymorphic under the hood -- you can pass composite animated values as sub-animations to bigger composite animated values!
 
-Using singular `AnimatedValue`s, we can define individual properties and how we what them to behave when we control our animations. And with composite animated values, we can define higher-level animations that correspond to a concept, like "reveal" or "bounce out".
+### Summary
+
+Using singular `AnimatedValue`s, we can define individual properties and how we want them to behave when we control our animations. And with composite animated values, we can define higher-level animations that correspond to a concept, like "reveal" or "bounce out". In either case, `animated-value` is great for animations that we want to be able to imperatively control tightly inside a component.
 
 ## Examples
 
@@ -235,7 +241,7 @@ Using singular `AnimatedValue`s, we can define individual properties and how we 
 
 ### React
 
-React is a great example of a declarative, component-based UI framework where imperative, interruptible transitions are tricky to implement from scratch. Here's an example of `AnimatedValue` used in a React component to animate in a reveal.
+Here's an example of `AnimatedValue` used in a React component to animate a reveal-in motion.
 
 In just a few extra lines, we've defined fully controllable, 60fps-animated properties on our component that fits right into React's declarative rendering style while being fully controllable from our application logic.
 
@@ -267,6 +273,7 @@ class AnimatedSquare extends Component {
     }
 
     reveal() {
+        // Play the animation for 800ms
         this.animatedReveal.play(800, () => {
             this.setState({
                 opacity: this.animatedOpacity.value(),
@@ -276,7 +283,7 @@ class AnimatedSquare extends Component {
     }
 
     componentDidMount() {
-        // start the animation
+        // start the animation on mount
         this.reveal();
     }
 
@@ -296,7 +303,7 @@ class AnimatedSquare extends Component {
 
 ### Torus
 
-[Torus](https://github.com/thesephist/torus) is a lightweight UI framework I wrote with a declarative UI rendering API. Here's what the equivalent component and animation would look like in Torus.
+[Torus](https://github.com/thesephist/torus) is a lightweight UI framework I wrote with a declarative UI rendering API, and it goes well with `animated-value`. Here's what the equivalent component and animation would look like in Torus.
 
 ```javascript
 class AnimatedSquare extends Component {
@@ -323,6 +330,8 @@ class AnimatedSquare extends Component {
     }
 
     reveal() {
+        // Run the reveal animation for 800ms, and re-render each frame
+        //  (that's what the call to `this.render()` does).
         this.animatedReveal.play(800, () => this.render());
     }
 

@@ -7,10 +7,11 @@
   "author": "Linus Lee <linus@thesephist.com>",
   "license": "MIT",
   "scripts": {
-    "build": "webpack --config webpack.config.js",
+    "build": "webpack --config webpack.config.js && cp dist/index.min.js demo/",
     "build:watch": "webpack --config webpack.config.js --watch",
     "test:size": "bundlesize",
-    "prepublishOnly": "webpack --config webpack.config.js"
+    "prepublishOnly": "webpack --config webpack.config.js",
+    "deploy:demo": "surge -p demo/ --domain animated-value.surge.sh"
   },
   "files": [
     "src",

@@ -21,7 +21,7 @@ class DemoView extends StyledComponent {
         });
         this.scale = new AnimatedValue({
             start: 1,
-            end: 1.3,
+            end: 1.8,
             ease: AnimatedValue.CURVES.EXPO_OUT,
         });
         this.angle = new AnimatedValue({
@@ -46,6 +46,9 @@ class DemoView extends StyledComponent {
     styles() {
         return {
             'font-family': 'sans-serif',
+            'max-width': '700px',
+            'margin': '24px auto',
+            'line-height': '1.5em',
             '.box': {
                 'height': '100px',
                 'width': '100px',
@@ -53,11 +56,25 @@ class DemoView extends StyledComponent {
                 'box-shadow': '0 2px 6px -1px rgba(0, 0, 0, .3)',
                 'border-radius': '4px',
             },
+            'button': {
+                'padding': '4px 8px',
+                'font-size': '16px',
+                'border-radius': '4px',
+                'margin': '4px',
+                'background': '#eee',
+                'cursor': 'pointer',
+            },
+            'code': {
+                'font-size': '1.3em',
+                'background': '#eee',
+                'padding': '3px 6px',
+                'border-radius': '4px',
+            },
         }
     }
 
     handleStartClick() {
-        this.slideOut.play(800, () => this.render()).then(result => {
+        this.slideOut.play(1200, () => this.render()).then(result => {
             console.log('Animation resolved to:', result);
         });
     }
@@ -76,19 +93,25 @@ class DemoView extends StyledComponent {
     }
 
     compose() {
-        console.log('rendering');
         return jdom`<main>
-            <h1>Click the button below to start the animation</h1>
-            <button class="startButton" onclick="${this.handleStartClick}">
+            <h1><code>animated-value</code> demo</h1>
+
+            <p>This is a simple demo of the <a href="https://github.com/thesephist/animated-value">animated-value</a> JavaScript library for rendering imperative animations in declarative UI frameworks. This demo is built with a UI framework called <a href="https://github.com/thesephist/torus">Torus</a>, but you can also use the library with most other declarative, component-based UI frameworks with class components.</p>
+
+            <p>In this demo, we're animating five different properties -- opacity, x and y translations, scale, and rotation -- together as a single animation with <code>animated-value</code>. You can grab the code for this demo <a href="https://github.com/thesephist/animated-value/blob/master/demo/main.js">here.</a></p>
+
+            <p>You can grab the npm package with <code>npm install animated-value</code> and read more at the link above.</p>
+
+            <button  onclick="${this.handleStartClick}">
                 Start animation
             </button>
-            <button class="pauseButton" onclick="${this.handlePauseClick}">
+            <button  onclick="${this.handlePauseClick}">
                 Pause animation
             </button>
-            <button class="resumeButton" onclick="${this.handleResumeClick}">
+            <button onclick="${this.handleResumeClick}">
                 Resume animation
             </button>
-            <button class="resetButton" onclick="${this.handleResetClick}">
+            <button onclick="${this.handleResetClick}">
                 Reset animation
             </button>
             <div class="box" style="
