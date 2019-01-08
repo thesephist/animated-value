@@ -4,11 +4,9 @@ const identity = t => t;
 
 const now = () => new Date().getTime();
 
-const ANIMATION_STATE = {
-    UNSTARTED: 0,
-    PLAYING: 1,
-    PAUSED: 2,
-}
+const STATE_UNSTARTED = 0;
+const STATE_PLAYING = 1;
+const STATE_PAUSED = 2;
 
 const CURVES = {
     LINEAR: identity,
@@ -26,21 +24,15 @@ const CURVES = {
 class Playable {
 
     constructor() {
+        this.state = STATE_UNSTARTED;
         this._duration = null;
         this._startTime = null;
         this._pausedTime = null;
         this._callback = null;
     }
 
-    get isPlaying() {
-        return this._startTime !== null;
-    }
-
-    get isFinished() {
-        return this._duration === null;
-    }
-
     play(duration, callback) {
+        this.state = STATE_PLAYING;
         this._duration = duration;
         this._startTime = now();
 
@@ -58,23 +50,24 @@ class Playable {
     }
 
     pause() {
-        if (this.isPlaying) {
+        if (this.state === STATE_PLAYING) {
+            this.state = STATE_PAUSED;
             this._pausedTime = now() - this._startTime;
             this._startTime = null;
         }
     }
 
     resume() {
-        if (!this.isFinished && !this.isPlaying) {
+        if (this.state === STATE_PAUSED) {
+            this.state = STATE_PLAYING;
             this._startTime = now() - this._pausedTime;
             this._pausedTime = null;
-            if (this.callback) {
-                this._callback();
-            }
+            this._callback();
         }
     }
 
     reset() {
+        this.state = STATE_UNSTARTED;
         this._duration = null;
         this._startTime = null;
         this._pausedTime = null;
@@ -106,7 +99,7 @@ class AnimatedValue extends Playable {
     }
 
     value() {
-        if (!this.isPlaying) { // means it's paused or finished
+        if (this.state !== STATE_PLAYING) { // means it's paused or finished
             return this._fillState;
         } else {
             const elapsedTime = now() - this._startTime;
@@ -116,10 +109,16 @@ class AnimatedValue extends Playable {
     }
 
     pause() {
-        super.pause();
-        if (this.isPlaying) {
+        if (this.state === STATE_PLAYING) {
+            //> The order matters here, because we can't get the value if we aren't playing
             this._fillState = this.value();
         }
+        super.pause();
+    }
+
+    reset() {
+        super.reset();
+        this._fillState = this.start;
     }
 
 }
@@ -148,12 +147,13 @@ class CompositeAnimatedValue extends Playable {
     }
 
     resume() {
-        super.resume();
-        if (!this.isFinished && !this.isPlaying) {
+        if (this.state === STATE_PAUSED) {
             for (const av of this._animatedValues) {
                 av.resume();
             }
         }
+        //> Order is important -- if we resume first, the checks above don't work
+        super.resume();
     }
 
     reset() {
