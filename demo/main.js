@@ -6,13 +6,13 @@ class DemoView extends StyledComponent {
 
     init() {
         this.opacity = new AnimatedValue({
-            start: 1,
-            end: .2,
+            start: .2,
+            end: 1,
         });
         this.xPosition = new AnimatedValue({
             start: 0,
             end: 300,
-            ease: AnimatedValue.CURVES.EASE_IN_OUT,
+            ease: AnimatedValue.CURVES.EASE_OUT_BACK,
         });
         this.yPosition = new AnimatedValue({
             start: 0,
@@ -24,11 +24,17 @@ class DemoView extends StyledComponent {
             end: 1.3,
             ease: AnimatedValue.CURVES.EXPO_OUT,
         });
+        this.angle = new AnimatedValue({
+            start: 300,
+            end: 0,
+            ease: AnimatedValue.CURVES.EASE_OUT_BACK,
+        });
         this.slideOut = AnimatedValue.compose(
             this.opacity,
             this.xPosition,
             this.yPosition,
             this.scale,
+            this.angle,
         );
 
         this.handleStartClick = this.handleStartClick.bind(this);
@@ -44,12 +50,16 @@ class DemoView extends StyledComponent {
                 'height': '100px',
                 'width': '100px',
                 'background': 'turquoise',
+                'box-shadow': '0 2px 6px -1px rgba(0, 0, 0, .3)',
+                'border-radius': '4px',
             },
         }
     }
 
     handleStartClick() {
-        this.slideOut.play(800, () => this.render());
+        this.slideOut.play(800, () => this.render()).then(result => {
+            console.log('Animation resolved to:', result);
+        });
     }
 
     handleResetClick() {
@@ -83,7 +93,8 @@ class DemoView extends StyledComponent {
             </button>
             <div class="box" style="
                 opacity: ${this.opacity.value()};
-                transform: translate(${this.xPosition.value()}px, ${this.yPosition.value()}px) scale(${this.scale.value()})
+                transform: translate(${this.xPosition.value()}px, ${this.yPosition.value()}px)
+                    scale(${this.scale.value()}) rotate(${this.angle.value()}deg)
             "></div>
         </main>`;
     }

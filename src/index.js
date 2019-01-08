@@ -29,24 +29,40 @@ class Playable {
         this._startTime = null;
         this._pausedTime = null;
         this._callback = null;
+        this._promise = Promise.resolve();
+        this._promiseResolver = null;
     }
 
     play(duration, callback) {
+        if (this.state === STATE_PLAYING) {
+            return this._promise;
+        }
+
         this.state = STATE_PLAYING;
         this._duration = duration;
         this._startTime = now();
 
-        this._callback = () => {
-            if (callback !== undefined) {
-                callback();
+        this._promise = new Promise((res, _rej) => {
+            this._promiseResolver = res;
+            this._callback = () => {
+                if (callback !== undefined) {
+                    callback();
+                }
+                if (this.state === STATE_PLAYING) {
+                    if (now() - this._startTime > this._duration) {
+                        this.pause();
+                        if (this._promiseResolver !== null) {
+                            this._promiseResolver(true);
+                            this._promiseResolver = null;
+                        }
+                    } else {
+                        requestAnimationFrame(this._callback);
+                    }
+                }
             }
-            if (now() - this._startTime > this._duration) {
-                this.pause();
-            } else {
-                requestAnimationFrame(this._callback);
-            }
-        }
-        this._callback();
+            this._callback();
+        });
+        return this._promise;
     }
 
     pause() {
@@ -67,6 +83,10 @@ class Playable {
     }
 
     reset() {
+        if (this._promiseResolver !== null) {
+            this._promiseResolver(false);
+            this._promiseResolver = null;
+        }
         this.state = STATE_UNSTARTED;
         this._duration = null;
         this._startTime = null;
@@ -133,10 +153,11 @@ class CompositeAnimatedValue extends Playable {
     play(duration, callback) {
         //> Play swallows the callback here and calls it once
         //  for the entire composition, efficiently.
-        super.play(duration, callback);
+        const ret = super.play(duration, callback);
         for (const av of this._animatedValues) {
             av.play(duration);
         }
+        return ret;
     }
 
     pause() {
