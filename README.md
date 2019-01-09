@@ -51,7 +51,7 @@ The `AnimatedValue` class represents a value (usually a CSS property) that you c
 - `end`: The final value of the `AnimatedValue`
 - `ease`: An easing function that maps `[0, 1)` to itself, mapping time to progress.
 
-The **start** and **end** values are numbers. For example, if we want to reveal a component by increasing the opacity from 0 to 1, we would have `start: 0` and `end: 1`.
+The **start** and **end** values are numbers. For example, if we want to reveal a component by increasing the opacity from 0 to 1, we would have `start: 0` and `end: 1`. We can also update the start and end positions of existing animated values by setting the `.start` and `.end` properties of the animated value instance. Note that if an animation is in progress, this will cause the animation to "jump" to the updated value in the next frame, unless we first pause the animation, update, and resume from the new position.
 
 The **ease** argument can be a function that maps time to progress through the animation (both on a 0 to 1 scale), like `t => Math.pow(t, 2)`, or an array of four numbers that define a cubic Bezier curve, like `[0, 1, 1, 0]`.
 
