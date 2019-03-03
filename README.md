@@ -101,8 +101,8 @@ But it's no good if the value is never rendered to the UI. In rendering, `animat
 ```javascript
 class MyAnimatedComponent extends React.Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.animatedOpacity = new AnimatedValue({
             start: 0,
             end: 1,
@@ -115,9 +115,11 @@ class MyAnimatedComponent extends React.Component {
     }
 
     render() {
-        return (
-            <div class="square" style={{opacity: this.animatedOpacity.value()}}></div>
-        );
+        return <div
+            class="square"
+            style={{opacity: this.animatedOpacity.value()}}
+            >
+            </div>;
     }
 
 }
@@ -132,15 +134,15 @@ To make this animation work, we also need to make sure we're re-rendering the co
 ```javascript
 class MyAnimatedComponent extends React.Component {
 
-    constructor() {
-        super();
-        this.state = {
-            opacity: 0,
-        }
+    constructor(props) {
+        super(props);
         this.animatedOpacity = new AnimatedValue({
             start: 0,
             end: 1,
         });
+        this.state = {
+            opacity: this.animatedOpacity.value(),
+        }
     }
 
     // We'll call this method to start the animation
@@ -154,9 +156,10 @@ class MyAnimatedComponent extends React.Component {
     }
 
     render() {
-        return (
-            <div class="square" style={{opacity: this.animatedOpacity.value()}}></div>
-        );
+        return <div
+            class="square"
+            style={{opacity: this.animatedOpacity.value()}}>
+            </div>;
     }
 
 }
@@ -254,8 +257,8 @@ In just a few extra lines, we've defined fully controllable, 60fps-animated prop
 ```javascript
 class AnimatedSquare extends Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             opacity: 0,
             xOffset: 0,

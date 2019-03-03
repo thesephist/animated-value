@@ -245,3 +245,4 @@ if (typeof window === 'object') {
 } else if (module && module.exports) {
     module.exports = { AnimatedValue };
 }
+
