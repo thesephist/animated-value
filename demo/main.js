@@ -45,7 +45,7 @@ class DemoView extends StyledComponent {
 
     styles() {
         return {
-            'font-family': 'sans-serif',
+            'font-family': 'system-ui, sans-serif',
             'max-width': '700px',
             'margin': '24px auto',
             'line-height': '1.5em',
@@ -124,5 +124,99 @@ class DemoView extends StyledComponent {
 
 }
 
+class DemoDynamicView extends StyledComponent {
+
+    init() {
+        this._dest = 0;
+
+        this.xPosition = new AnimatedValue.Dynamic({
+            start: 0,
+            end: 300,
+            stiffness: 5,
+            damping: .1,
+        });
+
+        this.handleStartClick = this.handleStartClick.bind(this);
+        this.handleResetClick = this.handleResetClick.bind(this);
+        this.handlePauseClick = this.handlePauseClick.bind(this);
+        this.handleResumeClick = this.handleResumeClick.bind(this);
+        this.redirectClick = this.redirectClick.bind(this);
+    }
+
+    styles() {
+        return {
+            'font-family': 'system-ui, sans-serif',
+            'max-width': '700px',
+            'margin': '24px auto',
+            'line-height': '1.5em',
+            '.box': {
+                'height': '100px',
+                'width': '100px',
+                'background': 'turquoise',
+                'box-shadow': '0 2px 6px -1px rgba(0, 0, 0, .3)',
+                'border-radius': '4px',
+            },
+            'button': {
+                'padding': '4px 8px',
+                'font-size': '16px',
+                'border-radius': '4px',
+                'margin': '4px',
+                'background': '#eee',
+                'cursor': 'pointer',
+            },
+        }
+    }
+
+    handleStartClick() {
+        this.xPosition.play(2000, () => this.render()).then(result => {
+            console.log('Animation resolved to:', result);
+        });
+    }
+
+    handleResetClick() {
+        this.xPosition.reset();
+        this.render();
+    }
+
+    handlePauseClick() {
+        this.xPosition.pause();
+    }
+
+    handleResumeClick() {
+        this.xPosition.resume();
+    }
+
+    redirectClick() {
+        this.xPosition.setEnd(this._dest);
+        this._dest = this._dest === 0 ? 300 : 0;
+    }
+
+    compose() {
+        return jdom`<main>
+            <button  onclick="${this.handleStartClick}">
+                Start animation
+            </button>
+            <button onclick="${this.redirectClick}">
+                Redirect animation
+            </button>
+            <button  onclick="${this.handlePauseClick}">
+                Pause animation
+            </button>
+            <button onclick="${this.handleResumeClick}">
+                Resume animation
+            </button>
+            <button onclick="${this.handleResetClick}">
+                Reset animation
+            </button>
+            <div class="box" style="
+                transform: translate(${this.xPosition.value()}px);
+            "></div>
+        </main>`;
+    }
+
+}
+
 const demoView = new DemoView();
+const demoDynamicView = new DemoDynamicView();
 document.body.appendChild(demoView.node);
+document.body.appendChild(demoDynamicView.node);

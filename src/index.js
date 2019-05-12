@@ -4,6 +4,8 @@
 //  library to resolve Bezier curves for us.
 import * as Bezier from 'bezier-easing';
 
+import {springFactory} from './spring.js';
+
 //> Linear easing curve
 const identity = t => t;
 
@@ -139,7 +141,7 @@ class AnimatedValue extends Playable {
         start = 0,
         end = 1,
         ease = identity,
-    }) {
+    } = {}) {
         super();
         this.start = start;
         this.end = end;
@@ -164,6 +166,10 @@ class AnimatedValue extends Playable {
         return new CompositeAnimatedValue(playables);
     }
 
+    static get Dynamic() {
+        return DynamicValue;
+    }
+
     //> What's the current numerical value of this animated value?
     //  This API is intentionally not implemented as a getter, to communicate
     //  to the API consumer that value computation has a nonzero cost with each access.
@@ -174,7 +180,7 @@ class AnimatedValue extends Playable {
         } else {
             const elapsedTime = now() - this._startTime;
             const elapsedDuration = elapsedTime > this._duration ? 1 : elapsedTime / this._duration;
-            return (this.end - this.start) * this.ease(elapsedDuration) + this.start;
+            return ((this.end - this.start) * this.ease(elapsedDuration)) + this.start;
         }
     }
 
@@ -240,9 +246,62 @@ class CompositeAnimatedValue extends Playable {
 
 }
 
+class DynamicValue extends AnimatedValue {
+
+    constructor({
+        start = 0,
+        end = 1,
+        stiffness = 2,
+        damping = .9,
+    } = {}) {
+        const ease = springFactory({
+            damping,
+            stiffness,
+            initial_velocity: 0,
+        });
+        super({
+            start,
+            end,
+            ease: t => 1 - ease(t),
+        });
+        this.damping = damping;
+        this.stiffness = stiffness;
+    }
+
+    play(duration, callback) {
+        this._lastTime = now();
+        return super.play(duration, callback);
+    }
+
+    setEnd(end) {
+        const n = now();
+        const elapsed = (n - this._startTime) / this._duration;
+
+        const DIFF = 0.001;
+        const velDiff = this.ease(elapsed) - this.ease(elapsed - DIFF) / DIFF;
+
+        const realVel = velDiff * (this.end - this.start) / (n - this._startTime);
+        const scaledVel = realVel / (end - this.value()) / this._duration;
+        const initVel = scaledVel;
+
+        const ease = springFactory({
+            damping: this.damping,
+            stiffness: this.stiffness,
+            initial_velocity: initVel,
+        });
+        this.start = this.value();
+        this.end = end;
+        this.ease = t => 1 - ease(t);
+        this._startTime = n;
+    }
+
+}
+
 if (typeof window === 'object') {
     window.AnimatedValue = AnimatedValue;
 } else if (module && module.exports) {
     module.exports = { AnimatedValue };
 }
+
+// TODO: unified frame loop
 
