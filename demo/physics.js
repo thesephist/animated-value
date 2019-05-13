@@ -8,14 +8,14 @@ class DemoView extends StyledComponent {
         this.xPosition = new AnimatedValue.Dynamic({
             start: 0,
             end: 500,
-            stiffness: 3,
-            damping: .9,
+            stiffness: 5,
+            damping: .6,
         });
         this.yPosition = new AnimatedValue.Dynamic({
             start: 0,
             end: 500,
-            stiffness: 3,
-            damping: .9,
+            stiffness: 5,
+            damping: .6,
         });
 
         this.handleStartClick = this.handleStartClick.bind(this);

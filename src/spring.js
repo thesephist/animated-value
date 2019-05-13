@@ -1,4 +1,4 @@
-/* springFactory
+/** springFactory
  * modified from https://hackernoon.com/the-spring-factory-4c3d988e7129
  *
  * Generate a physically realistic easing curve for a damped mass-spring system.
@@ -35,7 +35,9 @@ function springFactory(args) {
             zeta: zeta,
             k: k,
             y0: y0,
-            v0: v0,
+            // Modified from original to add factor PI/2 to keep velocity
+            //  self-consistent.
+            v0: v0 / Math.PI / 2,
         });
 
         B = result.B;

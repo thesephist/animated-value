@@ -251,13 +251,10 @@ class DynamicValue extends AnimatedValue {
     constructor({
         start = 0,
         end = 1,
-        stiffness = 2,
-        damping = .9,
+        stiffness = 3,
+        damping = .8,
     } = {}) {
         // TODO: need to fix how durations work here.
-        // TODO: this isn't how physics based values are used usually -- we set
-        //  a value and motify it later, don't immediately start with start and
-        //  end values.
         const ease = springFactory({
             damping,
             stiffness,
@@ -269,31 +266,22 @@ class DynamicValue extends AnimatedValue {
             ease: t => 1 - ease(t),
         });
         this.damping = damping;
-        this.stiffness = stiffness;
-    }
-
-    play(duration, callback) {
-        this._lastTime = now();
-        return super.play(duration, callback);
+        this.stiffness = ~~stiffness;
     }
 
     setEnd(end) {
         const n = now();
         const elapsed = (n - this._startTime) / this._duration;
 
-        const DIFF = 0.01;
+        const DIFF = 0.0001;
         const velDiff = (this.ease(elapsed) - this.ease(elapsed - DIFF)) / DIFF;
-
         const realVel = velDiff * (this.end - this.start);
         const scaledVel = realVel / (end - this.value());
-        const initVel = -Math.abs(scaledVel);
-
-        console.log(elapsed, velDiff, realVel, scaledVel);
 
         const ease = springFactory({
             damping: this.damping,
             stiffness: this.stiffness,
-            initial_velocity: initVel,
+            initial_velocity: -scaledVel,
         });
         this.start = this.value();
         this.end = end;
@@ -305,6 +293,7 @@ class DynamicValue extends AnimatedValue {
 
 if (typeof window === 'object') {
     window.AnimatedValue = AnimatedValue;
+    window.springFactory = springFactory;
 } else if (module && module.exports) {
     module.exports = { AnimatedValue };
 }

@@ -132,8 +132,8 @@ class DemoDynamicView extends StyledComponent {
         this.xPosition = new AnimatedValue.Dynamic({
             start: 0,
             end: 300,
-            stiffness: 5,
-            damping: .1,
+            stiffness: 6,
+            damping: .2,
         });
 
         this.handleStartClick = this.handleStartClick.bind(this);
