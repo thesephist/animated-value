@@ -208,8 +208,8 @@ class AnimatedValue extends Playable {
         return new CompositeAnimatedValue(playables);
     }
 
-    static get Dynamic() {
-        return DynamicValue;
+    static get Kinetic() {
+        return KineticValue;
     }
 
     //> What's the current numerical value of this animated value?
@@ -250,8 +250,8 @@ class CompositeAnimatedValue extends Playable {
         super();
         this._playables = playables;
         for (const p of this._playables) {
-            if (p instanceof DynamicValue) {
-                console.warn('AnimatedValue.Dynamic cannot be composed into composite animated values. Doing so may result in buggy and undefined behavior.');
+            if (p instanceof KineticValue) {
+                console.warn('AnimatedValue.Kinetic cannot be composed into composite animated values. Doing so may result in buggy and undefined behavior.');
             }
         }
     }
@@ -293,10 +293,10 @@ class CompositeAnimatedValue extends Playable {
 
 }
 
-//> A `DynamicValue` or `AnimatedValue.Dynamic` is an animated value whose animations are defined by
+//> A `KineticValue` or `AnimatedValue.Kinetic` is an animated value whose animations are defined by
 //  spring physics. As such, it takes only a starting position and some phsyics constants, and are
-//  aniamted to destination coordinates. Dynamic values also cannot be reset.
-class DynamicValue extends AnimatedValue {
+//  aniamted to destination coordinates. Kinetic values also cannot be reset.
+class KineticValue extends AnimatedValue {
 
     constructor({
         start = 0,
@@ -324,13 +324,13 @@ class DynamicValue extends AnimatedValue {
         });
         this.damping = damping;
         this.stiffness = stiffness;
-        //> In dynamic physics-based animations, the animation duration is a parameter
+        //> In kinetic physics-based animations, the animation duration is a parameter
         //  over the whole spring, not a single animation. So we set it for the value itself
         //  and store it here to use it in every animation instance.
         this._dynDuration = duration;
     }
 
-    //> `playTo()` substitutes `play()` for dynamic values, and is the way to animate the
+    //> `playTo()` substitutes `play()` for kinetic values, and is the way to animate the
     //  spring animated value to a new value.
     playTo(end, callback) {
         const n = now();
@@ -365,13 +365,13 @@ class DynamicValue extends AnimatedValue {
         return this._promise;
     }
 
-    //> Warnings for APIs that do not apply to dynamic values
+    //> Warnings for APIs that do not apply to kinetic values
     play() {
-        console.warn('Dynamic Animated Values should be played with playTo()');
+        console.warn('Kinetic Animated Values should be played with playTo()');
     }
 
     reset() {
-        console.warn('Dynamic Animated Values cannot be reset');
+        console.warn('Kinetic Animated Values cannot be reset');
     }
 
 }

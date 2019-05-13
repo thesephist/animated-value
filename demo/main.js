@@ -127,12 +127,12 @@ class DemoView extends StyledComponent {
 
 }
 
-class DemoDynamicView extends StyledComponent {
+class DemoKineticView extends StyledComponent {
 
     init() {
         this._dest = 0;
 
-        this.xPosition = new AnimatedValue.Dynamic({
+        this.xPosition = new AnimatedValue.Kinetic({
             start: 0,
             stiffness: 6,
             damping: .2,
@@ -190,9 +190,9 @@ class DemoDynamicView extends StyledComponent {
 
     compose() {
         return jdom`<main>
-            <p>In this demo, we're showing off the physics-based, spring-animation capabilities of <code>animated-value</code>. Dynamic animated values like this can be defined and controlled interactively and imperatively as well.</p>
+            <p>In this demo, we're showing off the physics-based, spring-animation capabilities of <code>animated-value</code>. Kinetic animated values like this can be defined and controlled interactively and imperatively as well.</p>
 
-            <p>You can also check out a more complex and completely interactive demo of physics-based animation in <a href="/dynamic.html">this demo page</a>.</p>
+            <p>You can also check out a more complex and completely interactive demo of physics-based animation in <a href="/kinetic.html">this demo page</a>.</p>
 
             <button  onclick="${this.handleStartClick}">
                 Run animation
@@ -212,6 +212,6 @@ class DemoDynamicView extends StyledComponent {
 }
 
 const demoView = new DemoView();
-const demoDynamicView = new DemoDynamicView();
+const demoKineticView = new DemoKineticView();
 document.body.appendChild(demoView.node);
-document.body.appendChild(demoDynamicView.node);
+document.body.appendChild(demoKineticView.node);
