@@ -4,6 +4,8 @@
 //  library to resolve Bezier curves for us.
 import * as Bezier from 'bezier-easing';
 
+//> Spring physics-based easing functions comes from this external
+//  dependency that resolves spring physics curves into functions.
 import {springFactory} from './spring.js';
 
 //> Linear easing curve
@@ -34,6 +36,46 @@ const CURVES = {
     EXPO_IN: Bezier(0.95, 0.05, 0.795, 0.035),
     EXPO_OUT: Bezier(0.19, 1, 0.22, 1),
     EXPO_IN_OUT: Bezier(1, 0, 0, 1),
+}
+
+//> ## Unified frame loop
+
+//> This section implements a unified frame loop for all animations
+//  performed by animated-value. Rather than each animated value orchestrating
+//  its own animation frame loop, if we implement one frame loop for the whole
+//  library and hook into it from each animated value, we can save many unnecessary
+//  calls to and from `requestAnimationFrame` during animation and keep code efficient.
+
+//> Is the unified frame loop (UFL) currently running?
+let rafRunning = false;
+//> Queue of callbacks to be run on the next animation frame
+let rafQueue = [];
+//> The function that runs at most once every animation frame. This calls
+//  all queued callbacks once, and if necessary, enqueues a recursive call in the
+//  next frame.
+const runAnimationFrame = () => {
+    requestAnimationFrame(() => {
+        const q = rafQueue;
+        rafQueue = [];
+        for (const cb of q) {
+            cb();
+        }
+        if (rafQueue.length > 0) {
+            runAnimationFrame();
+        } else {
+            rafRunning = false;
+        }
+    });
+}
+//> The animation frame callback that enqueues new callbacks into the next
+//  frame callback and optionally starts the frame loop if one is not running.
+const raf = callback => {
+    rafQueue.push(callback);
+
+    if (!rafRunning) {
+        rafRunning = true;
+        runAnimationFrame();
+    }
 }
 
 //> The `Playable` class represents something whose timeline
@@ -91,7 +133,7 @@ class Playable {
                             this._promiseResolver = null;
                         }
                     } else {
-                        requestAnimationFrame(this._callback);
+                        raf(this._callback);
                     }
                 }
             }
@@ -207,6 +249,11 @@ class CompositeAnimatedValue extends Playable {
     constructor(playables) {
         super();
         this._playables = playables;
+        for (const p of this._playables) {
+            if (p instanceof DynamicValue) {
+                console.warn('AnimatedValue.Dynamic cannot be composed into composite animated values. Doing so may result in buggy and undefined behavior.');
+            }
+        }
     }
 
     play(duration, callback) {
@@ -246,6 +293,9 @@ class CompositeAnimatedValue extends Playable {
 
 }
 
+//> A `DynamicValue` or `AnimatedValue.Dynamic` is an animated value whose animations are defined by
+//  spring physics. As such, it takes only a starting position and some phsyics constants, and are
+//  aniamted to destination coordinates. Dynamic values also cannot be reset.
 class DynamicValue extends AnimatedValue {
 
     constructor({
@@ -268,37 +318,54 @@ class DynamicValue extends AnimatedValue {
         super({
             start,
             end,
+            //> Functions from `springFactory` start at 1 and go to 0, so
+            //  we need to invert it for our use case.
             ease: t => 1 - ease(t),
         });
         this.damping = damping;
         this.stiffness = stiffness;
+        //> In dynamic physics-based animations, the animation duration is a parameter
+        //  over the whole spring, not a single animation. So we set it for the value itself
+        //  and store it here to use it in every animation instance.
         this._dynDuration = duration;
     }
 
+    //> `playTo()` substitutes `play()` for dynamic values, and is the way to animate the
+    //  spring animated value to a new value.
     playTo(end, callback) {
         const n = now();
+        //> Get elapsed time scaled to the range [0, 1]
         const elapsed = (n - this._startTime) / this._duration;
 
+        //> Determine instantaneous velocity
         const DIFF = 0.0001;
         const velDiff = (this.ease(elapsed) - this.ease(elapsed - DIFF)) / DIFF;
+
+        //> Scale the velocity to the new start and end coordinates, since the distance
+        //  covered will modify how the [0, 1] range scales out to real values.
         const scaledVel = velDiff * (this.end - this.start) / (end - this.value());
 
+        //> Create a new easing curve based on the new velocity
         const ease = springFactory({
             damping: this.damping,
             stiffness: this.stiffness,
             initial_velocity: -scaledVel,
         });
+        //> Reset animation values so the next frame will render  using the new animation parameters
         this.start = this.value();
         this.end = end;
         this.ease = t => 1 - ease(t);
         this._startTime = n;
 
+        //> If there is not already an animation running, start it.
         if (this.state !== STATE_PLAYING) {
             super.play(this._dynDuration, callback);
         }
+        //> Return promise for chaining calls.
         return this._promise;
     }
 
+    //> Warnings for APIs that do not apply to dynamic values
     play() {
         console.warn('Dynamic Animated Values should be played with playTo()');
     }
@@ -314,6 +381,3 @@ if (typeof window === 'object') {
 } else if (module && module.exports) {
     module.exports = {AnimatedValue};
 }
-
-// TODO: unified frame loop
-
