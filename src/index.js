@@ -312,7 +312,7 @@ class DynamicValue extends AnimatedValue {
 if (typeof window === 'object') {
     window.AnimatedValue = AnimatedValue;
 } else if (module && module.exports) {
-    module.exports = { AnimatedValue };
+    module.exports = {AnimatedValue};
 }
 
 // TODO: unified frame loop
