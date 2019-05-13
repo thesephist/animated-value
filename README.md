@@ -4,7 +4,7 @@
 [![gzip size](http://img.badgesize.io/https://unpkg.com/animated-value/dist/index.min.js?compression=gzip)](https://unpkg.com/animated-value/dist/index.min.js)
 [![install size](https://packagephobia.now.sh/badge?p=animated-value)](https://packagephobia.now.sh/result?p=animated-value)
 
-`animated-value` is an **imperative animation API for declarative UI renderers**, like React, Preact, and Torus. It allows us to build rich, fully interactive animations with the full benefits of a JavaScript-driven imperative animation system -- custom tweening and physics, full interruptibility and redirectability, reliable chaining and callbacks, and more -- within the robust declarative UI frameworks we use to build apps today.
+`animated-value` is an **imperative animation API for declarative UI renderers**, like React, Preact, and Torus. It allows us to build rich, fully interactive animations with the full benefits of a JavaScript-driven imperative animation system -- custom tweening and physics including spring-based interactive physics, full interruptibility and redirectability, reliable chaining and callbacks, and more -- within the robust declarative UI frameworks we use to build apps today.
 
 You can see a simple demo of `animated-value` [here](https://animated-value.surge.sh); the source is linked, and also found under `demo/`.
 
@@ -239,6 +239,37 @@ animatedSwing.play(2000);
 ```
 
 Composite values like this have the same play/pause/resume/reset API as singular `AnimatedValue`s. In fact, the animations API are polymorphic under the hood -- you can pass composite animated values as sub-animations to bigger composite animated values!
+
+## Spring physics and `AnimatedValue.Dynamic`
+
+Going beyond simple easing-based animations, one way to add more liveliness and delight into UI animation is to use spring physics-based animation. This means that, rather than depending on Bezier curves for defining the progression of a value over time, we'll treat the value as if it had inertia and were pulled to new values by a string.
+
+You can check out [this excellent talk at WWDC 2017, titled "Designing Fluid Interfaces,"](https://developer.apple.com/videos/play/wwdc2018/803/) for an overview of physics-based animation in UI.
+
+`animated-value` provides a second kind of animation primitive, the **dynamic animated value**, from which we can build fluid, spring physics-based animations. Like `AnimatedValue`s, dynamic values can be applied to any numerical value and animated over time. We can create new dynamic values like this
+
+```javascript
+const springPosition = new AnimatedValue.Dynamic({
+    start: 0,
+    stiffness: 5,
+    damping: .4,
+});
+...
+springPosition.playTo(250, () => render());
+```
+
+There are two critical differences to remember when we're using dynamic values to build animated components.
+
+First, **dynamic values do not take end values**. Instead, we define a current value and animate the value _to_ a new destination value using `.playTo(newValue)`.
+
+Second, **dynamic values are parameterized by stiffness and damping, not an easing curve**. The stiffness and damping constants determine the behavior of the "spring" powering the animation.
+
+- The **damping** determines how "bouncy" the spring is and covers the range [0, 1). The higher the damping, the less bouncy the spring.
+- The **stiffness** determines how strong the spring's recoil force is. Feel free to experiment with these values to find a value that feels right! `animated-value` comes with sane defaults that should feel natural in most UIs.
+
+Like normal `AnimatedValue`s, `AnimatedValue.Dynamic` are also perfectly *reentrant, interruptible, smooth, and redirectable*. You can call `.playTo(endValue)` with new values repeatedly, even in the middle of other animations, and the value will transition smoothly and realistically to new values.
+
+Dynamic values by nature cannot be reset nor played without destination values, but they can still be paused and resumed at any time. Because of some of these API differences, and because it would simply be jarring in UI, dynamic values cannot be composed with `AnimatedValue.compose` -- doing so will result in console warnings and unsupported behaviors.
 
 ### Summary
 
