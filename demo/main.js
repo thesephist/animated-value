@@ -49,6 +49,9 @@ class DemoView extends StyledComponent {
             'max-width': '700px',
             'margin': '24px auto',
             'line-height': '1.5em',
+            'h1': {
+                'line-height': '1.5em',
+            },
             '.box': {
                 'height': '100px',
                 'width': '100px',
@@ -131,16 +134,13 @@ class DemoDynamicView extends StyledComponent {
 
         this.xPosition = new AnimatedValue.Dynamic({
             start: 0,
-            end: 300,
             stiffness: 6,
             damping: .2,
         });
 
         this.handleStartClick = this.handleStartClick.bind(this);
-        this.handleResetClick = this.handleResetClick.bind(this);
         this.handlePauseClick = this.handlePauseClick.bind(this);
         this.handleResumeClick = this.handleResumeClick.bind(this);
-        this.redirectClick = this.redirectClick.bind(this);
     }
 
     styles() {
@@ -164,18 +164,20 @@ class DemoDynamicView extends StyledComponent {
                 'background': '#eee',
                 'cursor': 'pointer',
             },
+            'code': {
+                'font-size': '1.3em',
+                'background': '#eee',
+                'padding': '3px 6px',
+                'border-radius': '4px',
+            },
         }
     }
 
     handleStartClick() {
-        this.xPosition.play(2000, () => this.render()).then(result => {
+        this._dest = this._dest === 0 ? 300 : 0;
+        this.xPosition.playTo(this._dest, () => this.render()).then(result => {
             console.log('Animation resolved to:', result);
         });
-    }
-
-    handleResetClick() {
-        this.xPosition.reset();
-        this.render();
     }
 
     handlePauseClick() {
@@ -186,27 +188,20 @@ class DemoDynamicView extends StyledComponent {
         this.xPosition.resume();
     }
 
-    redirectClick() {
-        this.xPosition.setEnd(this._dest);
-        this._dest = this._dest === 0 ? 300 : 0;
-    }
-
     compose() {
         return jdom`<main>
+            <p>In this demo, we're showing off the physics-based, spring-animation capabilities of <code>animated-value</code>. Dynamic animated values like this can be defined and controlled interactively and imperatively as well.</p>
+
+            <p>You can also check out a more complex and completely interactive demo of physics-based animation in <a href="/dynamic.html">this demo page</a>.</p>
+
             <button  onclick="${this.handleStartClick}">
-                Start animation
-            </button>
-            <button onclick="${this.redirectClick}">
-                Redirect animation
+                Run animation
             </button>
             <button  onclick="${this.handlePauseClick}">
                 Pause animation
             </button>
             <button onclick="${this.handleResumeClick}">
                 Resume animation
-            </button>
-            <button onclick="${this.handleResetClick}">
-                Reset animation
             </button>
             <div class="box" style="
                 transform: translate(${this.xPosition.value()}px);

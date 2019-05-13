@@ -250,11 +250,16 @@ class DynamicValue extends AnimatedValue {
 
     constructor({
         start = 0,
-        end = 1,
+        end = null,
         stiffness = 3,
         damping = .8,
+        duration = 1000,
     } = {}) {
-        // TODO: need to fix how durations work here.
+        if (end === null) {
+            end = start;
+        }
+        stiffness = ~~stiffness;
+
         const ease = springFactory({
             damping,
             stiffness,
@@ -266,17 +271,17 @@ class DynamicValue extends AnimatedValue {
             ease: t => 1 - ease(t),
         });
         this.damping = damping;
-        this.stiffness = ~~stiffness;
+        this.stiffness = stiffness;
+        this._dynDuration = duration;
     }
 
-    setEnd(end) {
+    playTo(end, callback) {
         const n = now();
         const elapsed = (n - this._startTime) / this._duration;
 
         const DIFF = 0.0001;
         const velDiff = (this.ease(elapsed) - this.ease(elapsed - DIFF)) / DIFF;
-        const realVel = velDiff * (this.end - this.start);
-        const scaledVel = realVel / (end - this.value());
+        const scaledVel = velDiff * (this.end - this.start) / (end - this.value());
 
         const ease = springFactory({
             damping: this.damping,
@@ -287,13 +292,25 @@ class DynamicValue extends AnimatedValue {
         this.end = end;
         this.ease = t => 1 - ease(t);
         this._startTime = n;
+
+        if (this.state !== STATE_PLAYING) {
+            super.play(this._dynDuration, callback);
+        }
+        return this._promise;
+    }
+
+    play() {
+        console.warn('Dynamic Animated Values should be played with playTo()');
+    }
+
+    reset() {
+        console.warn('Dynamic Animated Values cannot be reset');
     }
 
 }
 
 if (typeof window === 'object') {
     window.AnimatedValue = AnimatedValue;
-    window.springFactory = springFactory;
 } else if (module && module.exports) {
     module.exports = { AnimatedValue };
 }
