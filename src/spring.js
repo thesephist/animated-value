@@ -28,7 +28,7 @@ function springFactory({
     let B;
     let omega;
 
-    // If v0 is 0, an analytical solution exists, otherwise,
+    //> If v0 is 0, an analytical solution exists, otherwise,
     // we need to numerically solve it.
     if (Math.abs(v0) < 1e-6) {
         B = zeta * y0 / Math.sqrt(1 - (zeta * zeta));
@@ -58,14 +58,14 @@ function springFactory({
 
 function computeOmega(A, B, k, zeta) {
 
-    // Haven't quite figured out why yet, but to ensure same behavior of
+    //> Haven't quite figured out why yet, but to ensure same behavior of
     // k when argument of arctangent is negative, need to subtract pi
     // otherwise an extra halfcycle occurs.
-    //
-    // It has someting to do with -atan(-x) = atan(x),
+
+    //> It has something to do with -atan(-x) = atan(x),
     // the range of atan being (-pi/2, pi/2) which is a difference of pi.
-    //
-    // The other way to look at it is that for every integer k there is a
+
+    //> The other way to look at it is that for every integer k there is a
     // solution and the 0 point for k is arbitrary, we just want it to be
     // equal to the thing that gives us the same number of halfcycles as k.
     if (A * B < 0 && k >= 1) {
@@ -76,14 +76,14 @@ function computeOmega(A, B, k, zeta) {
 }
 
 
-// Resolve recursive definition of omega an B using bisection method
+//> Resolve recursive definition of omega an B using bisection method
 function numericallySolveOmegaAndB({
     zeta,
     k,
     y0 = 1,
     v0 = 0,
 } = {}) {
-    // See https://en.wikipedia.org/wiki/Damping#Under-damping_.280_.E2.89.A4_.CE.B6_.3C_1.29
+    //> See [Underdamping on Wikipedia](https://en.wikipedia.org/wiki/Damping#Under-damping_.280_.E2.89.A4_.CE.B6_.3C_1.29).
     // B and omega are recursively defined in solution. Know omega in terms of B, will numerically
     // solve for B.
     function errorfn(B, omega) {
@@ -91,7 +91,7 @@ function numericallySolveOmegaAndB({
         return B - (((zeta * omega * y0) + v0) / omega_d);
     }
 
-    // initial guess that's pretty close
+    //> Initial guess that's pretty close
     const A = y0;
     let B = zeta;
 
@@ -173,6 +173,7 @@ function numericallySolveOmegaAndB({
     };
 }
 
+//> Export a namespaced version of the spring curve solver.
 export {
     springFactory,
 }

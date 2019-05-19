@@ -12,6 +12,7 @@
     "test:size": "bundlesize",
     "prepublishOnly": "webpack --config webpack.config.js",
     "deploy:demo": "surge -p demo/ --domain https://animated-value.surge.sh",
+    "docs": "litterate --config ./litterate.config.js",
     "lint": "eslint src/**/*.js"
   },
   "files": [
@@ -24,6 +25,7 @@
   "devDependencies": {
     "bundlesize": "^0.17.1",
     "eslint": "^5.16.0",
+    "litterate": "^0.1.1",
     "webpack": "^4.31.0",
     "webpack-cli": "^3.3.2"
   },

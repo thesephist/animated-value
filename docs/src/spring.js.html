@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>./src/spring.js annotated source</title>
+    <link rel="stylesheet" href="/main.css">
+</head>
+
+<body>
+    <main>
+        <div class="line">
+            <div class="doc">
+                <h1>./src/spring.js <span class="fade">annotated source</span></h1>
+                <em><a class="back" href="/">Back to index</a></em>
+            </div>
+            <pre></pre>
+        </div>
+        <div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">1</strong>/* springFactory</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">2</strong> * modified from https://hackernoon.com/the-spring-factory-4c3d988e7129</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">3</strong> *</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">4</strong> * Generate a physically realistic easing curve for a damped mass-spring system.</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">5</strong> *</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">6</strong> * Required:</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">7</strong> *   damping (zeta): [0, 1)</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">8</strong> *   stiffness: 0...inf</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">9</strong> *</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">10</strong> * Optional:</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">11</strong> *   initial_position: -1..1, default 1</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">12</strong> *   initial_velocity: -inf..+inf, default 0</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">13</strong> *</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">14</strong> * Return: f(t), t in 0..1</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">15</strong> */</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">16</strong>function springFactory({</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">17</strong>    damping = .8,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">18</strong>    stiffness = 3,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">19</strong>    initial_position = 1,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">20</strong>    initial_velocity = 0,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">21</strong>} = {}) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">22</strong>    const zeta = damping;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">23</strong>    const k = stiffness;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">24</strong>    const y0 = initial_position;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">25</strong>    const v0 = initial_velocity;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">26</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">27</strong>    const A = y0;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">28</strong>    let B;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">29</strong>    let omega;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">30</strong></pre></div>
+<div class="line"><div class="doc"><p>If v0 is 0, an analytical solution exists, otherwise, we need to numerically solve it.</p>
+</div><pre class="source javascript"><strong class="lineNumber">33</strong>    if (Math.abs(v0) &#60; 1e-6) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">34</strong>        B = zeta * y0 / Math.sqrt(1 - (zeta * zeta));</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">35</strong>        omega = computeOmega(A, B, k, zeta);</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">36</strong>    } else {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">37</strong>        const result = numericallySolveOmegaAndB({</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">38</strong>            zeta: zeta,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">39</strong>            k: k,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">40</strong>            y0: y0,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">41</strong>            // Modified from original to add factor PI/2 to keep velocity</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">42</strong>            //  self-consistent.</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">43</strong>            v0: v0 / Math.PI / 2,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">44</strong>        });</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">45</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">46</strong>        B = result.B;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">47</strong>        omega = result.omega;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">48</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">49</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">50</strong>    omega *= 2 * Math.PI;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">51</strong>    const omega_d = omega * Math.sqrt(1 - (zeta * zeta));</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">52</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">53</strong>    return t =&#62; {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">54</strong>        const sinusoid = (A * Math.cos(omega_d * t)) + (B * Math.sin(omega_d * t));</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">55</strong>        return Math.exp(-t * zeta * omega) * sinusoid;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">56</strong>    };</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">57</strong>}</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">58</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">59</strong>function computeOmega(A, B, k, zeta) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">60</strong></pre></div>
+<div class="line"><div class="doc"><p>Haven&#39;t quite figured out why yet, but to ensure same behavior of k when argument of arctangent is negative, need to subtract pi otherwise an extra halfcycle occurs.</p>
+</div><pre class="source javascript"><strong class="lineNumber">64</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber"></strong></pre></div>
+<div class="line"><div class="doc"><p>It has something to do with -atan(-x) = atan(x), the range of atan being (-pi/2, pi/2) which is a difference of pi.</p>
+</div><pre class="source javascript"><strong class="lineNumber">67</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber"></strong></pre></div>
+<div class="line"><div class="doc"><p>The other way to look at it is that for every integer k there is a solution and the 0 point for k is arbitrary, we just want it to be equal to the thing that gives us the same number of halfcycles as k.</p>
+</div><pre class="source javascript"><strong class="lineNumber">71</strong>    if (A * B &#60; 0 &#38;&#38; k &#62;= 1) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">72</strong>        k --;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">73</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">74</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">75</strong>    return (-Math.atan(A / B) + (Math.PI * k)) / (2 * Math.PI * Math.sqrt(1 - (zeta * zeta)));</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">76</strong>}</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">77</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">78</strong></pre></div>
+<div class="line"><div class="doc"><p>Resolve recursive definition of omega an B using bisection method</p>
+</div><pre class="source javascript"><strong class="lineNumber">80</strong>function numericallySolveOmegaAndB({</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">81</strong>    zeta,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">82</strong>    k,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">83</strong>    y0 = 1,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">84</strong>    v0 = 0,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">85</strong>} = {}) {</pre></div>
+<div class="line"><div class="doc"><p>See <a href="https://en.wikipedia.org/wiki/Damping#Under-damping_.280_.E2.89.A4_.CE.B6_.3C_1.29">Underdamping on Wikipedia</a>. B and omega are recursively defined in solution. Know omega in terms of B, will numerically solve for B.</p>
+</div><pre class="source javascript"><strong class="lineNumber">89</strong>    function errorfn(B, omega) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">90</strong>        const omega_d = omega * Math.sqrt(1 - (zeta * zeta));</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">91</strong>        return B - (((zeta * omega * y0) + v0) / omega_d);</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">92</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">93</strong></pre></div>
+<div class="line"><div class="doc"><p>Initial guess that&#39;s pretty close</p>
+</div><pre class="source javascript"><strong class="lineNumber">95</strong>    const A = y0;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">96</strong>    let B = zeta;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">97</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">98</strong>    let omega;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">99</strong>    let error;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">100</strong>    let direction;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">101</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">102</strong>    function step() {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">103</strong>        omega = computeOmega(A, B, k, zeta);</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">104</strong>        error = errorfn(B, omega);</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">105</strong>        direction = -Math.sign(error);</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">106</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">107</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">108</strong>    step();</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">109</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">110</strong>    const tolerence = 1e-6;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">111</strong>    let lower;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">112</strong>    let upper;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">113</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">114</strong>    let ct = 0;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">115</strong>    const maxct = 1e3;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">116</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">117</strong>    if (direction &#62; 0) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">118</strong>        while (direction &#62; 0) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">119</strong>            ct ++;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">120</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">121</strong>            if (ct &#62; maxct) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">122</strong>                break;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">123</strong>            }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">124</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">125</strong>            lower = B;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">126</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">127</strong>            B *= 2;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">128</strong>            step();</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">129</strong>        }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">130</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">131</strong>        upper = B;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">132</strong>    } else {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">133</strong>        upper = B;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">134</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">135</strong>        B *= -1;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">136</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">137</strong>        while (direction &#60; 0) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">138</strong>            ct ++;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">139</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">140</strong>            if (ct &#62; maxct) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">141</strong>                break;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">142</strong>            }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">143</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">144</strong>            lower = B;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">145</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">146</strong>            B *= 2;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">147</strong>            step();</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">148</strong>        }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">149</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">150</strong>        lower = B;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">151</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">152</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">153</strong>    while (Math.abs(error) &#62; tolerence) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">154</strong>        ct ++;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">155</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">156</strong>        if (ct &#62; maxct) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">157</strong>            break;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">158</strong>        }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">159</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">160</strong>        B = (upper + lower) / 2;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">161</strong>        step();</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">162</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">163</strong>        if (direction &#62; 0) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">164</strong>            lower = B;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">165</strong>        } else {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">166</strong>            upper = B;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">167</strong>        }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">168</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">169</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">170</strong>    return {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">171</strong>        omega,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">172</strong>        B,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">173</strong>    };</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">174</strong>}</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">175</strong></pre></div>
+<div class="line"><div class="doc"><p>Export a namespaced version of the spring curve solver.</p>
+</div><pre class="source javascript"><strong class="lineNumber">177</strong>export {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">178</strong>    springFactory,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">179</strong>}</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">180</strong></pre></div>
+    </main>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github-gist.min.css">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
+    <script>
+        for (const el of document.querySelectorAll('.line pre')) {
+            hljs.highlightBlock(el);
+        }
+    </script>
+</body>
+
+</html>

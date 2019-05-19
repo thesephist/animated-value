@@ -78,6 +78,8 @@ const raf = callback => {
     }
 }
 
+//> ## `Playable` interface
+
 //> The `Playable` class represents something whose timeline
 //  can be played, paused, and reset. Both a single AnimatedValue,
 //  as well as `CompositeAnimatedValue` (a combination of more than
