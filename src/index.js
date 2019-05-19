@@ -14,7 +14,7 @@ const identity = t => t;
 //> Animation involves lots of measuring time.
 //  This is a shortcut to get the current unix epoch time
 //  in milliseconds.
-const now = () => new Date().getTime();
+const now = () => Date.now();
 
 //> AnimatedValue's animation objects are state machines, with
 //  three states. These three states are represented as these
