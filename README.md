@@ -4,7 +4,7 @@
 [![gzip size](http://img.badgesize.io/https://unpkg.com/animated-value/dist/index.min.js?compression=gzip)](https://unpkg.com/animated-value/dist/index.min.js)
 [![install size](https://packagephobia.now.sh/badge?p=animated-value)](https://packagephobia.now.sh/result?p=animated-value)
 
-`animated-value` is an **imperative animation API for declarative UI renderers**, like React, Preact, and Torus. It allows you to build rich, fully interactive animations with the full benefits of a JavaScript-driven imperative animation system -- custom tweening and spring physics, reliable chaining and callbacks, and more -- within the robust declarative UI frameworks we use to build apps today.
+`animated-value` is an **imperative animation API for declarative UI renderers**, like React, Preact, and [Torus](https://github.com/thesephist/torus). It allows you to build rich, fully interactive animations with the full benefits of a JavaScript-driven imperative animation system -- custom tweening and spring physics, reliable chaining and callbacks, and more -- within the robust declarative UI frameworks we use to build apps today.
 
 Animations built with Animated Value can be ...
 
