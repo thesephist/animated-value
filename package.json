@@ -23,10 +23,10 @@
     "bezier-easing": "^2.1.0"
   },
   "devDependencies": {
-    "bundlesize": "^0.17.1",
+    "bundlesize": "^0.17.2",
     "eslint": "^5.16.0",
     "litterate": "^0.1.1",
-    "webpack": "^4.31.0",
+    "webpack": "^4.32.2",
     "webpack-cli": "^3.3.2"
   },
   "bundlesize": [
