@@ -53,7 +53,7 @@ If you're not to keen on reading gobs of documentation, feel free to skip down t
 
 ### `AnimatedValue`
 
-The `AnimatedValue` class represents a value (usually a CSS property) that you can define an animation for. An animation is defined by three things:
+The `AnimatedValue` class represents a value (usually a CSS or text number value) that you can define an animation for. An animation is defined by three things:
 
 - `start`: The initial value of the `AnimatedValue`
 - `end`: The final value of the `AnimatedValue`
@@ -63,7 +63,7 @@ The **start** and **end** values are numbers. For example, if we want to reveal 
 
 The **ease** argument can be a function that maps time to progress through the animation (both on a 0 to 1 scale), like `t => Math.pow(t, 2)`, or an array of four numbers that define a cubic Bezier curve, like `[0, 1, 1, 0]`.
 
-An `AnimatedValue` object has a **value** at any given time, and you can ask for the value at the current time by calling `AnimatedValue#value()`. If the animation hasn't started yet, this will be initialized to the start value.
+An `AnimatedValue` object has a **value** at any given time, and you can ask for the value at the current time by calling `AnimatedValue#value()`. If the animation hasn't started yet, this will be initialized to the start value. You can manually set the current value of an animation using `AnimatedValue#set(value)`, which may be useful when controlling animated values in response to user input like dragging.
 
 When we render declaratively, we can use the `#value()` getter to get the value of an animated property at render time (see examples below for reference).
 

@@ -214,6 +214,10 @@ class AnimatedValue extends Playable {
         return KineticValue;
     }
 
+    set(value) {
+        this._fillState = value;
+    }
+
     //> What's the current numerical value of this animated value?
     //  This API is intentionally not implemented as a getter, to communicate
     //  to the API consumer that value computation has a nonzero cost with each access.
