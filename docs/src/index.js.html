@@ -210,163 +210,167 @@
 <div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">214</strong>        return KineticValue;</pre></div>
 <div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">215</strong>    }</pre></div>
 <div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">216</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">217</strong>    set(value) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">218</strong>        this._fillState = value;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">219</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">220</strong></pre></div>
 <div class="line"><div class="doc"><p>What&#39;s the current numerical value of this animated value? This API is intentionally not implemented as a getter, to communicate to the API consumer that value computation has a nonzero cost with each access.</p>
-</div><pre class="source javascript"><strong class="lineNumber">220</strong>    value() {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">221</strong>        if (this.state !== STATE_PLAYING) {</pre></div>
+</div><pre class="source javascript"><strong class="lineNumber">224</strong>    value() {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">225</strong>        if (this.state !== STATE_PLAYING) {</pre></div>
 <div class="line"><div class="doc"><p>If the animation is not playing, just return the last fill value</p>
-</div><pre class="source javascript"><strong class="lineNumber">223</strong>            return this._fillState;</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">224</strong>        } else {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">225</strong>            const elapsedTime = now() - this._startTime;</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">226</strong>            const elapsedDuration = elapsedTime &#62; this._duration ? 1 : elapsedTime / this._duration;</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">227</strong>            return ((this.end - this.start) * this.ease(elapsedDuration)) + this.start;</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">228</strong>        }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">229</strong>    }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">230</strong></pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">231</strong>    pause() {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">232</strong>        if (this.state === STATE_PLAYING) {</pre></div>
+</div><pre class="source javascript"><strong class="lineNumber">227</strong>            return this._fillState;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">228</strong>        } else {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">229</strong>            const elapsedTime = now() - this._startTime;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">230</strong>            const elapsedDuration = elapsedTime &#62; this._duration ? 1 : elapsedTime / this._duration;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">231</strong>            return ((this.end - this.start) * this.ease(elapsedDuration)) + this.start;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">232</strong>        }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">233</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">234</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">235</strong>    pause() {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">236</strong>        if (this.state === STATE_PLAYING) {</pre></div>
 <div class="line"><div class="doc"><p>The order of <code>super</code> call matters here, because we can&#39;t get the value if we aren&#39;t playing</p>
-</div><pre class="source javascript"><strong class="lineNumber">234</strong>            this._fillState = this.value();</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">235</strong>        }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">236</strong>        super.pause();</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">237</strong>    }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">238</strong></pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">239</strong>    reset() {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">240</strong>        super.reset();</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">241</strong>        this._fillState = this.start;</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">242</strong>    }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">243</strong></pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">244</strong>}</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">245</strong></pre></div>
+</div><pre class="source javascript"><strong class="lineNumber">238</strong>            this._fillState = this.value();</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">239</strong>        }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">240</strong>        super.pause();</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">241</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">242</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">243</strong>    reset() {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">244</strong>        super.reset();</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">245</strong>        this._fillState = this.start;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">246</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">247</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">248</strong>}</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">249</strong></pre></div>
 <div class="line"><div class="doc"><p>A <code>CompositeAnimatedValue</code> is a <code>Playable</code> wrapper around many (single, composite) animated values, that can run all of the animations in the same duration, concurrently. <code>CompositeAnimatedValue</code> is polymorphic, and can take any <code>Playable</code> as a sub-animation.</p>
-</div><pre class="source javascript"><strong class="lineNumber">249</strong>class CompositeAnimatedValue extends Playable {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">250</strong></pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">251</strong>    constructor(playables) {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">252</strong>        super();</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">253</strong>        this._playables = playables;</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">254</strong>        for (const p of this._playables) {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">255</strong>            if (p instanceof KineticValue) {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">256</strong>                console.warn('AnimatedValue.Kinetic cannot be composed into composite animated values. Doing so may result in buggy and undefined behavior.');</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">257</strong>            }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">258</strong>        }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">259</strong>    }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">260</strong></pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">261</strong>    play(duration, callback) {</pre></div>
+</div><pre class="source javascript"><strong class="lineNumber">253</strong>class CompositeAnimatedValue extends Playable {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">254</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">255</strong>    constructor(playables) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">256</strong>        super();</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">257</strong>        this._playables = playables;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">258</strong>        for (const p of this._playables) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">259</strong>            if (p instanceof KineticValue) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">260</strong>                console.warn('AnimatedValue.Kinetic cannot be composed into composite animated values. Doing so may result in buggy and undefined behavior.');</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">261</strong>            }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">262</strong>        }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">263</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">264</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">265</strong>    play(duration, callback) {</pre></div>
 <div class="line"><div class="doc"><p><code>CompositeAnimatedValue#play()</code> swallows the callback here and calls it once for the entire composition, efficiently, so the callback isn&#39;t called N times for N animated values below this composite animation.</p>
-</div><pre class="source javascript"><strong class="lineNumber">265</strong>        const ret = super.play(duration, callback);</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">266</strong>        for (const av of this._playables) {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">267</strong>            av.play(duration);</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">268</strong>        }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">269</strong>        return ret;</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">270</strong>    }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">271</strong></pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">272</strong>    pause() {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">273</strong>        super.pause();</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">274</strong>        for (const av of this._playables) {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">275</strong>            av.pause();</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">276</strong>        }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">277</strong>    }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">278</strong></pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">279</strong>    resume() {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">280</strong>        if (this.state === STATE_PAUSED) {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">281</strong>            for (const av of this._playables) {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">282</strong>                av.resume();</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">283</strong>            }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">284</strong>        }</pre></div>
+</div><pre class="source javascript"><strong class="lineNumber">269</strong>        const ret = super.play(duration, callback);</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">270</strong>        for (const av of this._playables) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">271</strong>            av.play(duration);</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">272</strong>        }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">273</strong>        return ret;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">274</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">275</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">276</strong>    pause() {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">277</strong>        super.pause();</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">278</strong>        for (const av of this._playables) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">279</strong>            av.pause();</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">280</strong>        }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">281</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">282</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">283</strong>    resume() {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">284</strong>        if (this.state === STATE_PAUSED) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">285</strong>            for (const av of this._playables) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">286</strong>                av.resume();</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">287</strong>            }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">288</strong>        }</pre></div>
 <div class="line"><div class="doc"><p>Order of <code>super.resume()</code> call is important -- if we resume first, the checks above don&#39;t work</p>
-</div><pre class="source javascript"><strong class="lineNumber">286</strong>        super.resume();</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">287</strong>    }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">288</strong></pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">289</strong>    reset() {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">290</strong>        super.reset();</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">291</strong>        for (const av of this._playables) {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">292</strong>            av.reset();</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">293</strong>        }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">294</strong>    }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">295</strong></pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">296</strong>}</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">297</strong></pre></div>
+</div><pre class="source javascript"><strong class="lineNumber">290</strong>        super.resume();</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">291</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">292</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">293</strong>    reset() {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">294</strong>        super.reset();</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">295</strong>        for (const av of this._playables) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">296</strong>            av.reset();</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">297</strong>        }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">298</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">299</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">300</strong>}</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">301</strong></pre></div>
 <div class="line"><div class="doc"><p>A <code>KineticValue</code> or <code>AnimatedValue.Kinetic</code> is an animated value whose animations are defined by spring physics. As such, it takes only a starting position and some phsyics constants, and are aniamted to destination coordinates. Kinetic values also cannot be reset.</p>
-</div><pre class="source javascript"><strong class="lineNumber">301</strong>class KineticValue extends AnimatedValue {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">302</strong></pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">303</strong>    constructor({</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">304</strong>        start = 0,</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">305</strong>        end = null,</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">306</strong>        stiffness = 3,</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">307</strong>        damping = .8,</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">308</strong>        duration = 1000,</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">309</strong>    } = {}) {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">310</strong>        if (end === null) {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">311</strong>            end = start;</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">312</strong>        }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">313</strong>        stiffness = ~~stiffness;</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">314</strong></pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">315</strong>        const ease = springFactory({</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">316</strong>            damping,</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">317</strong>            stiffness,</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">318</strong>            initial_velocity: 0,</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">319</strong>        });</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">320</strong>        super({</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">321</strong>            start,</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">322</strong>            end,</pre></div>
+</div><pre class="source javascript"><strong class="lineNumber">305</strong>class KineticValue extends AnimatedValue {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">306</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">307</strong>    constructor({</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">308</strong>        start = 0,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">309</strong>        end = null,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">310</strong>        stiffness = 3,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">311</strong>        damping = .8,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">312</strong>        duration = 1000,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">313</strong>    } = {}) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">314</strong>        if (end === null) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">315</strong>            end = start;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">316</strong>        }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">317</strong>        stiffness = ~~stiffness;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">318</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">319</strong>        const ease = springFactory({</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">320</strong>            damping,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">321</strong>            stiffness,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">322</strong>            initial_velocity: 0,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">323</strong>        });</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">324</strong>        super({</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">325</strong>            start,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">326</strong>            end,</pre></div>
 <div class="line"><div class="doc"><p>Functions from <code>springFactory</code> start at 1 and go to 0, so we need to invert it for our use case.</p>
-</div><pre class="source javascript"><strong class="lineNumber">325</strong>            ease: t =&#62; 1 - ease(t),</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">326</strong>        });</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">327</strong>        this.damping = damping;</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">328</strong>        this.stiffness = stiffness;</pre></div>
+</div><pre class="source javascript"><strong class="lineNumber">329</strong>            ease: t =&#62; 1 - ease(t),</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">330</strong>        });</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">331</strong>        this.damping = damping;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">332</strong>        this.stiffness = stiffness;</pre></div>
 <div class="line"><div class="doc"><p>In kinetic physics-based animations, the animation duration is a parameter over the whole spring, not a single animation. So we set it for the value itself and store it here to use it in every animation instance.</p>
-</div><pre class="source javascript"><strong class="lineNumber">332</strong>        this._dynDuration = duration;</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">333</strong>    }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">334</strong></pre></div>
+</div><pre class="source javascript"><strong class="lineNumber">336</strong>        this._dynDuration = duration;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">337</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">338</strong></pre></div>
 <div class="line"><div class="doc"><p><code>playTo()</code> substitutes <code>play()</code> for kinetic values, and is the way to animate the spring animated value to a new value.</p>
-</div><pre class="source javascript"><strong class="lineNumber">337</strong>    playTo(end, callback) {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">338</strong>        const n = now();</pre></div>
+</div><pre class="source javascript"><strong class="lineNumber">341</strong>    playTo(end, callback) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">342</strong>        const n = now();</pre></div>
 <div class="line"><div class="doc"><p>Get elapsed time scaled to the range [0, 1]</p>
-</div><pre class="source javascript"><strong class="lineNumber">340</strong>        const elapsed = (n - this._startTime) / this._duration;</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">341</strong></pre></div>
-<div class="line"><div class="doc"><p>Determine instantaneous velocity</p>
-</div><pre class="source javascript"><strong class="lineNumber">343</strong>        const DIFF = 0.0001;</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">344</strong>        const velDiff = (this.ease(elapsed) - this.ease(elapsed - DIFF)) / DIFF;</pre></div>
+</div><pre class="source javascript"><strong class="lineNumber">344</strong>        const elapsed = (n - this._startTime) / this._duration;</pre></div>
 <div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">345</strong></pre></div>
-<div class="line"><div class="doc"><p>Scale the velocity to the new start and end coordinates, since the distance covered will modify how the [0, 1] range scales out to real values.</p>
-</div><pre class="source javascript"><strong class="lineNumber">348</strong>        const scaledVel = velDiff * (this.end - this.start) / (end - this.value());</pre></div>
+<div class="line"><div class="doc"><p>Determine instantaneous velocity</p>
+</div><pre class="source javascript"><strong class="lineNumber">347</strong>        const DIFF = 0.0001;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">348</strong>        const velDiff = (this.ease(elapsed) - this.ease(elapsed - DIFF)) / DIFF;</pre></div>
 <div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">349</strong></pre></div>
+<div class="line"><div class="doc"><p>Scale the velocity to the new start and end coordinates, since the distance covered will modify how the [0, 1] range scales out to real values.</p>
+</div><pre class="source javascript"><strong class="lineNumber">352</strong>        const scaledVel = velDiff * (this.end - this.start) / (end - this.value());</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">353</strong></pre></div>
 <div class="line"><div class="doc"><p>Create a new easing curve based on the new velocity</p>
-</div><pre class="source javascript"><strong class="lineNumber">351</strong>        const ease = springFactory({</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">352</strong>            damping: this.damping,</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">353</strong>            stiffness: this.stiffness,</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">354</strong>            initial_velocity: -scaledVel,</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">355</strong>        });</pre></div>
+</div><pre class="source javascript"><strong class="lineNumber">355</strong>        const ease = springFactory({</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">356</strong>            damping: this.damping,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">357</strong>            stiffness: this.stiffness,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">358</strong>            initial_velocity: -scaledVel,</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">359</strong>        });</pre></div>
 <div class="line"><div class="doc"><p>Reset animation values so the next frame will render  using the new animation parameters</p>
-</div><pre class="source javascript"><strong class="lineNumber">357</strong>        this.start = this.value();</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">358</strong>        this.end = end;</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">359</strong>        this.ease = t =&#62; 1 - ease(t);</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">360</strong>        this._startTime = n;</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">361</strong></pre></div>
+</div><pre class="source javascript"><strong class="lineNumber">361</strong>        this.start = this.value();</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">362</strong>        this.end = end;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">363</strong>        this.ease = t =&#62; 1 - ease(t);</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">364</strong>        this._startTime = n;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">365</strong></pre></div>
 <div class="line"><div class="doc"><p>If there is not already an animation running, start it.</p>
-</div><pre class="source javascript"><strong class="lineNumber">363</strong>        if (this.state !== STATE_PLAYING) {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">364</strong>            super.play(this._dynDuration, callback);</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">365</strong>        }</pre></div>
+</div><pre class="source javascript"><strong class="lineNumber">367</strong>        if (this.state !== STATE_PLAYING) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">368</strong>            super.play(this._dynDuration, callback);</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">369</strong>        }</pre></div>
 <div class="line"><div class="doc"><p>Return promise for chaining calls.</p>
-</div><pre class="source javascript"><strong class="lineNumber">367</strong>        return this._promise;</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">368</strong>    }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">369</strong></pre></div>
+</div><pre class="source javascript"><strong class="lineNumber">371</strong>        return this._promise;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">372</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">373</strong></pre></div>
 <div class="line"><div class="doc"><p>Warnings for APIs that do not apply to kinetic values</p>
-</div><pre class="source javascript"><strong class="lineNumber">371</strong>    play() {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">372</strong>        console.warn('Kinetic Animated Values should be played with playTo()');</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">373</strong>    }</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">374</strong></pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">375</strong>    reset() {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">376</strong>        console.warn('Kinetic Animated Values cannot be reset');</pre></div>
+</div><pre class="source javascript"><strong class="lineNumber">375</strong>    play() {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">376</strong>        console.warn('Kinetic Animated Values should be played with playTo()');</pre></div>
 <div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">377</strong>    }</pre></div>
 <div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">378</strong></pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">379</strong>}</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">380</strong></pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">381</strong>if (typeof window === 'object') {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">382</strong>    window.AnimatedValue = AnimatedValue;</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">383</strong>} else if (module &#38;&#38; module.exports) {</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">384</strong>    module.exports = {AnimatedValue};</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">385</strong>}</pre></div>
-<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">386</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">379</strong>    reset() {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">380</strong>        console.warn('Kinetic Animated Values cannot be reset');</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">381</strong>    }</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">382</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">383</strong>}</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">384</strong></pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">385</strong>if (typeof window === 'object') {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">386</strong>    window.AnimatedValue = AnimatedValue;</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">387</strong>} else if (module &#38;&#38; module.exports) {</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">388</strong>    module.exports = {AnimatedValue};</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">389</strong>}</pre></div>
+<div class="line"><div class="doc"></div><pre class="source javascript"><strong class="lineNumber">390</strong></pre></div>
     </main>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github-gist.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script>
