@@ -1,10 +1,12 @@
-# `animated-value`
+# Animated Value
 
 [![npm animated-value](https://img.shields.io/npm/v/animated-value.svg)](http://npm.im/animated-value)
 [![gzip size](http://img.badgesize.io/https://unpkg.com/animated-value/dist/index.min.js?compression=gzip)](https://unpkg.com/animated-value/dist/index.min.js)
 [![install size](https://packagephobia.now.sh/badge?p=animated-value)](https://packagephobia.now.sh/result?p=animated-value)
 
 `animated-value` is an **imperative animation API for declarative UI renderers**, like React, Preact, and [Torus](https://github.com/thesephist/torus). It allows you to build rich, fully interactive animations with the full benefits of a JavaScript-driven imperative animation system -- custom tweening and spring physics, reliable chaining and callbacks, and more -- within the robust declarative UI frameworks we use to build apps today.
+
+Recently, I discovered that Animated Value inexplicably shares some API similarities with React Native's excellent `Animated` APIs. Many concepts run parallel, and some don't carry over.
 
 Animations built with Animated Value can be ...
 
