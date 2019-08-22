@@ -174,6 +174,4 @@ function numericallySolveOmegaAndB({
 }
 
 //> Export a namespaced version of the spring curve solver.
-export {
-    springFactory,
-}
+export {springFactory}

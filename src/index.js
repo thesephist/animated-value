@@ -384,6 +384,9 @@ class KineticValue extends AnimatedValue {
 
 if (typeof window === 'object') {
     window.AnimatedValue = AnimatedValue;
-} else if (module && module.exports) {
-    module.exports = {AnimatedValue};
 }
+
+// exported names: allow:
+//  import AnimatedValue, { Kinetic } from 'animated-value';
+export const Kinetic = KineticValue;
+export default AnimatedValue;
