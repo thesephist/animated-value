@@ -24,10 +24,10 @@
   },
   "devDependencies": {
     "bundlesize": "^0.18.0",
-    "eslint": "^6.1.0",
-    "litterate": "^0.1.1",
-    "webpack": "^4.38.0",
-    "webpack-cli": "^3.3.6"
+    "eslint": "^6.7.2",
+    "litterate": "^0.1.2",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   },
   "bundlesize": [
     {
